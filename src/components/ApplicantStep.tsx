@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import type { EnrollmentType } from "../types/enrollment";
 
 interface ApplicantStepProps {
@@ -16,6 +16,9 @@ function ApplicantStep({ enrollmentType, onPrev }: ApplicantStepProps) {
   const [groupName, setGroupName] = useState("");
   const [headCount, setHeadCount] = useState(2);
 
+  const [toastMessage, setToastMessage] = useState("");
+  const toastTimerRef = useRef<number | null>(null);
+
   // 전화번호 010-0000-0000 형태로 자동 포맷팅
   const formatPhoneNumber = (value: string) => {
     const onlyNumbers = value.replace(/[^0-9]/g, "");
@@ -26,6 +29,17 @@ function ApplicantStep({ enrollmentType, onPrev }: ApplicantStepProps) {
       return `${onlyNumbers.slice(0, 3)}-${onlyNumbers.slice(3)}`;
     }
     return `${onlyNumbers.slice(0, 3)}-${onlyNumbers.slice(3, 7)}-${onlyNumbers.slice(7, 11)}`;
+  };
+
+  // 토스트 함수
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    if (toastTimerRef.current) {
+      clearTimeout(toastTimerRef.current);
+    }
+    toastTimerRef.current = window.setTimeout(() => {
+      setToastMessage("");
+    }, 2000);
   };
 
   const isNameValid = name.trim().length >= 2; // 공백 제거 후 2글자 이상
@@ -40,6 +54,12 @@ function ApplicantStep({ enrollmentType, onPrev }: ApplicantStepProps) {
   );
   return (
     <section className="space-y-6">
+      {/* 토스트 메시지 */}
+      {toastMessage && (
+        <div className="fixed top-6 left-1/2 z-50 -translate-x-1/2 rounded-xl bg-blue-100 px-5 py-3 text-sm font-semibold text-gray-900 shadow-lg">
+          🚨 {toastMessage}
+        </div>
+      )}
       {/* 이전 단계 버튼 */}
       <div>
         <button
@@ -178,17 +198,17 @@ function ApplicantStep({ enrollmentType, onPrev }: ApplicantStepProps) {
             <input
               id="headCount"
               type="number"
-              min={2}
-              max={10}
               value={headCount}
               onChange={(event) => {
                 const value = Number(event.target.value);
                 if (value < 2) {
                   setHeadCount(2);
+                  showToast("단체 신청은 최소 2명부터 가능해요!");
                   return;
                 }
                 if (value > 10) {
                   setHeadCount(10);
+                  showToast("최대 10명까지만 신청할 수 있어요!");
                   return;
                 }
                 setHeadCount(value);
