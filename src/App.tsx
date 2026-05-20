@@ -39,7 +39,10 @@ function App() {
             />
           )}
           {currentStep === 2 && (
-            <ApplicantStep onPrev={() => setCurrentStep(1)} />
+            <ApplicantStep
+              enrollmentType={enrollmentType}
+              onPrev={() => setCurrentStep(1)}
+            />
           )}
         </div>
       </div>

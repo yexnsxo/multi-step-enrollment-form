@@ -1,11 +1,13 @@
 import { useState } from "react";
+import type { EnrollmentType } from "../types/enrollment";
 
 interface ApplicantStepProps {
+  enrollmentType: EnrollmentType | null;
   onPrev: () => void;
 }
 
 // 수강생 정보 입력 단계 컴포넌트
-function ApplicantStep({ onPrev }: ApplicantStepProps) {
+function ApplicantStep({ enrollmentType, onPrev }: ApplicantStepProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -28,6 +30,7 @@ function ApplicantStep({ onPrev }: ApplicantStepProps) {
   const isPhoneValid = /^010-\d{4}-\d{4}$/.test(phone); // 010-1234-5678 형태
 
   const canGoNext = isNameValid && isEmailValid && isPhoneValid;
+  const isGroupEnrollment = enrollmentType === "group";
   return (
     <section className="space-y-6">
       {/* 이전 단계 버튼 */}
@@ -128,6 +131,51 @@ function ApplicantStep({ onPrev }: ApplicantStepProps) {
           />
         </div>
       </div>
+
+      {/* 단체 신청 추가 정보 */}
+      {isGroupEnrollment && (
+        <div className="space-y-4 rounded-2xl border border-blue-100 bg-blue-50 p-5">
+          <div>
+            <h3 className="font-bold text-blue-900">단체 신청 정보</h3>
+            <p className="mt-1 text-sm text-blue-700">
+              단체 신청에 필요한 추가 정보를 입력해주세요.
+            </p>
+          </div>
+
+          {/* 단체명 입력 */}
+          <div>
+            <label
+              htmlFor="groupName"
+              className="mb-2 block text-sm font-semibold text-gray-800"
+            >
+              단체명
+            </label>
+            <input
+              id="groupName"
+              type="text"
+              placeholder="단체명을 입력해주세요."
+              className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-600"
+            />
+          </div>
+
+          {/* 신청 인원 입력 */}
+          <div>
+            <label
+              htmlFor="headCount"
+              className="mb-2 block text-sm font-semibold text-gray-800"
+            >
+              신청 인원
+            </label>
+            <input
+              id="headCount"
+              type="number"
+              min={2}
+              placeholder="2명 이상 입력해주세요."
+              className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-600"
+            />
+          </div>
+        </div>
+      )}
 
       {/* 다음 단계 버튼 */}
       <div className="flex justify-end border-t border-gray-200 pt-6">
