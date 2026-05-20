@@ -1,6 +1,6 @@
 ---
-name: multi_step_enrollment_form_ISSUE
-about: multi step enrollment form Issue Template
+name: Multi Step Enrollment Form ISSUE
+about: Multi Step Enrollment Form Issue Template
 title: "[Tag] Issue Message"
 labels: ''
 assignees: ''
