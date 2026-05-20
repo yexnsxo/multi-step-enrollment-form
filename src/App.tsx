@@ -19,6 +19,14 @@ function App() {
     phone: "",
     motivation: "",
   });
+  const [groupInfo, setGroupInfo] = useState({
+    groupName: "",
+    headCount: 2,
+    participants: [
+      { name: "", email: "" },
+      { name: "", email: "" },
+    ],
+  });
 
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-8">
@@ -52,6 +60,8 @@ function App() {
               enrollmentType={enrollmentType}
               applicant={applicant}
               onChangeApplicant={setApplicant}
+              groupInfo={groupInfo}
+              onChangeGroupInfo={setGroupInfo}
               onPrev={() => setCurrentStep(1)}
               onNext={() => setCurrentStep(3)}
             />
@@ -61,6 +71,7 @@ function App() {
               selectedCourse={selectedCourse}
               enrollmentType={enrollmentType}
               applicant={applicant}
+              groupInfo={groupInfo}
               onPrev={() => setCurrentStep(2)}
             />
           )}

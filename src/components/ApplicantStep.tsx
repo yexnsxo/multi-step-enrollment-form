@@ -22,6 +22,16 @@ interface ApplicantStepProps {
     phone: string;
     motivation: string;
   }) => void;
+  groupInfo: {
+    groupName: string;
+    headCount: number;
+    participants: Participant[];
+  };
+  onChangeGroupInfo: (groupInfo: {
+    groupName: string;
+    headCount: number;
+    participants: Participant[];
+  }) => void;
   onPrev: () => void;
   onNext: () => void;
 }
@@ -31,16 +41,11 @@ function ApplicantStep({
   enrollmentType,
   applicant,
   onChangeApplicant,
+  groupInfo,
+  onChangeGroupInfo,
   onPrev,
   onNext,
 }: ApplicantStepProps) {
-  const [groupName, setGroupName] = useState("");
-  const [headCount, setHeadCount] = useState(2);
-  const [participants, setParticipants] = useState<Participant[]>([
-    { name: "", email: "" },
-    { name: "", email: "" },
-  ]);
-
   const [toastMessage, setToastMessage] = useState("");
   const toastTimerRef = useRef<number | null>(null);
 
@@ -57,49 +62,42 @@ function ApplicantStep({
 
   // 신청 인원 변경 시 참가자 입력 배열 길이 조정
   const updateHeadCount = (value: number) => {
-    if (value < 2) {
-      setHeadCount(2);
-      setParticipants((prevParticipants) =>
-        prevParticipants
-          .slice(0, 2)
-          .concat(
-            Array.from(
-              { length: Math.max(0, 2 - prevParticipants.length) },
-              () => ({ name: "", email: "" }),
-            ),
-          ),
+    const getNextParticipants = (targetCount: number) => {
+      return groupInfo.participants.slice(0, targetCount).concat(
+        Array.from(
+          {
+            length: Math.max(0, targetCount - groupInfo.participants.length),
+          },
+          () => ({ name: "", email: "" }),
+        ),
       );
+    };
+
+    if (value < 2) {
+      onChangeGroupInfo({
+        ...groupInfo,
+        headCount: 2,
+        participants: getNextParticipants(2),
+      });
       showToast("단체 신청은 최소 2명부터 가능해요!");
       return;
     }
 
     if (value > 10) {
-      setHeadCount(10);
-      setParticipants((prevParticipants) =>
-        prevParticipants
-          .slice(0, 10)
-          .concat(
-            Array.from(
-              { length: Math.max(0, 10 - prevParticipants.length) },
-              () => ({ name: "", email: "" }),
-            ),
-          ),
-      );
+      onChangeGroupInfo({
+        ...groupInfo,
+        headCount: 10,
+        participants: getNextParticipants(10),
+      });
       showToast("최대 10명까지만 신청할 수 있어요!");
       return;
     }
 
-    setHeadCount(value);
-    setParticipants((prevParticipants) =>
-      prevParticipants
-        .slice(0, value)
-        .concat(
-          Array.from(
-            { length: Math.max(0, value - prevParticipants.length) },
-            () => ({ name: "", email: "" }),
-          ),
-        ),
-    );
+    onChangeGroupInfo({
+      ...groupInfo,
+      headCount: value,
+      participants: getNextParticipants(value),
+    });
   };
 
   // 공통 정보 검증
@@ -109,12 +107,15 @@ function ApplicantStep({
 
   // 단체 정보 검증
   const isGroupEnrollment = enrollmentType === "group";
-  const isGroupNameValid = groupName.trim().length > 0;
+  const isGroupNameValid = groupInfo.groupName.trim().length > 0;
 
-  const hasDuplicateParticipantEmail = hasDuplicateEmails(participants);
+  const hasDuplicateParticipantEmail = hasDuplicateEmails(
+    groupInfo.participants,
+  );
+
   const isGroupInfoValid =
     isGroupNameValid &&
-    areParticipantsValid(participants) &&
+    areParticipantsValid(groupInfo.participants) &&
     !hasDuplicateParticipantEmail;
 
   const isBasicInfoValid = isNameValid && isEmailValid && isPhoneValid;
@@ -271,8 +272,13 @@ function ApplicantStep({
             <input
               id="groupName"
               type="text"
-              value={groupName}
-              onChange={(event) => setGroupName(event.target.value)}
+              value={groupInfo.groupName}
+              onChange={(event) =>
+                onChangeGroupInfo({
+                  ...groupInfo,
+                  groupName: event.target.value,
+                })
+              }
               placeholder="단체명을 입력해주세요."
               className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-600"
             />
@@ -289,7 +295,7 @@ function ApplicantStep({
             <input
               id="headCount"
               type="number"
-              value={headCount}
+              value={groupInfo.headCount}
               onChange={(event) => updateHeadCount(Number(event.target.value))}
               placeholder="2명 이상 입력해주세요."
               className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-600"
@@ -303,7 +309,7 @@ function ApplicantStep({
               실제 수강할 참가자 정보를 입력해주세요.
             </p>
             <div className="space-y-3">
-              {participants.map((participant, index) => {
+              {groupInfo.participants.map((participant, index) => {
                 const participantNumber = index + 1;
                 return (
                   <div
@@ -322,9 +328,15 @@ function ApplicantStep({
                         type="text"
                         value={participant.name}
                         onChange={(event) => {
-                          const nextParticipants = [...participants];
-                          nextParticipants[index].name = event.target.value;
-                          setParticipants(nextParticipants);
+                          const nextParticipants = [...groupInfo.participants];
+                          nextParticipants[index] = {
+                            ...nextParticipants[index],
+                            name: event.target.value,
+                          };
+                          onChangeGroupInfo({
+                            ...groupInfo,
+                            participants: nextParticipants,
+                          });
                         }}
                         placeholder="이름"
                         className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-600"
@@ -342,9 +354,15 @@ function ApplicantStep({
                         type="email"
                         value={participant.email}
                         onChange={(event) => {
-                          const nextParticipants = [...participants];
-                          nextParticipants[index].email = event.target.value;
-                          setParticipants(nextParticipants);
+                          const nextParticipants = [...groupInfo.participants];
+                          nextParticipants[index] = {
+                            ...nextParticipants[index],
+                            email: event.target.value,
+                          };
+                          onChangeGroupInfo({
+                            ...groupInfo,
+                            participants: nextParticipants,
+                          });
                         }}
                         placeholder="example@email.com"
                         className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-600"

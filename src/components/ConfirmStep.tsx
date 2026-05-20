@@ -1,5 +1,6 @@
 import type { Course } from "../types/course";
 import type { EnrollmentType } from "../types/enrollment";
+import type { Participant } from "../types/applicant";
 
 interface ConfirmStepProps {
   selectedCourse: Course | null;
@@ -10,6 +11,11 @@ interface ConfirmStepProps {
     phone: string;
     motivation: string;
   };
+  groupInfo: {
+    groupName: string;
+    headCount: number;
+    participants: Participant[];
+  };
   onPrev: () => void;
 }
 
@@ -18,6 +24,7 @@ function ConfirmStep({
   selectedCourse,
   enrollmentType,
   applicant,
+  groupInfo,
   onPrev,
 }: ConfirmStepProps) {
   const enrollmentTypeLabel =
@@ -103,6 +110,45 @@ function ConfirmStep({
           </p>
         </div>
       </div>
+
+      {/* 단체 신청 정보 */}
+      {enrollmentType === "group" && (
+        <div className="rounded-2xl border border-gray-200 bg-white p-5">
+          <h3 className="font-bold text-gray-900">단체 신청 정보</h3>
+
+          <div className="mt-4 space-y-2 text-sm text-gray-700">
+            <p>
+              <span className="font-semibold">단체명:</span>{" "}
+              {groupInfo.groupName}
+            </p>
+            <p>
+              <span className="font-semibold">신청 인원:</span>{" "}
+              {groupInfo.headCount}명
+            </p>
+          </div>
+
+          <div className="mt-5 space-y-3">
+            <h4 className="text-sm font-bold text-gray-800">참가자 명단</h4>
+            <div className="space-y-2">
+              {groupInfo.participants.map((participant, index) => (
+                <div
+                  key={`${participant.email}-${index}`}
+                  className="rounded-xl bg-gray-50 p-4 text-sm text-gray-700"
+                >
+                  <p>
+                    <span className="font-semibold">참가자 {index + 1}:</span>{" "}
+                    {participant.name}
+                  </p>
+                  <p className="mt-1">
+                    <span className="font-semibold">이메일:</span>{" "}
+                    {participant.email}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 제출 버튼 */}
       <div className="flex justify-end border-t border-gray-200 pt-6">
