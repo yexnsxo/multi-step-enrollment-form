@@ -164,7 +164,7 @@ function CourseStep({
                 : "border-gray-200 bg-white hover:border-blue-300"
             }`}
           >
-            <p className="font-bold text-gray-900">단체 신청 (2명 이상)</p>
+            <p className="font-bold text-gray-900">단체 신청 (2 ~ 10명)</p>
             <p className="mt-1 text-sm text-gray-600">
               해당 강의를 단체로 수강할 예정입니다.
             </p>
