@@ -101,7 +101,8 @@ function ApplicantStep({
   };
 
   // 공통 정보 검증
-  const isNameValid = applicant.name.trim().length >= 2; // 공백 제거 후 2글자 이상
+  const isNameValid =
+    applicant.name.trim().length >= 2 && applicant.name.trim().length <= 20; // 공백 제거 후 2글자 이상 20글자 미만
   const isEmailValid = isValidEmail(applicant.email); // example@mail.com 형태
   const isPhoneValid = /^010-\d{4}-\d{4}$/.test(applicant.phone); // 010-1234-5678 형태
 
@@ -175,9 +176,13 @@ function ApplicantStep({
                 name: event.target.value,
               })
             }
+            maxLength={20}
             placeholder="이름을 입력해주세요."
             className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-600"
           />
+          <p className="mt-1 text-xs text-gray-500">
+            이름은 2~20자 이내로 입력해주세요.
+          </p>
         </div>
 
         {/* 이메일 입력 */}
@@ -244,10 +249,14 @@ function ApplicantStep({
                 motivation: event.target.value,
               })
             }
+            maxLength={300}
             placeholder="수강 동기를 입력해주세요."
             rows={4}
             className="w-full resize-none rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-600"
           />
+          <p className="mt-1 text-right text-xs text-gray-500">
+            {applicant.motivation.length} / 300
+          </p>
         </div>
       </div>
 
