@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { categories, courses } from "../data/courses";
 import type { CourseCategory, Course } from "../types/course";
+import type { EnrollmentType } from "../types/enrollment";
 
 // 강의 선택 단계 컴포넌트
 function CourseStep() {
@@ -9,11 +10,16 @@ function CourseStep() {
     useState<CategoryFilter>("all");
 
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  const [enrollmentType, setEnrollmentType] = useState<EnrollmentType | null>(
+    null,
+  );
 
   const filteredCourses =
     selectedCategory === "all"
       ? courses
       : courses.filter((course) => course.category === selectedCategory);
+
+  const canGoNext = selectedCourse !== null && enrollmentType !== null;
 
   return (
     <section className="space-y-6 m-5">
@@ -38,10 +44,10 @@ function CourseStep() {
                 key={category.value}
                 type="button"
                 onClick={() => setSelectedCategory(category.value)}
-                className={`rounded-full border px-4 py-2 text-sm transition ${
+                className={`cursor-pointer rounded-full border px-4 py-2 text-sm transition ${
                   isSelected
-                    ? "border-blue-600 bg-blue-600 text-white hover:cursor-pointer"
-                    : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:cursor-pointer"
+                    ? "border-blue-600 bg-blue-600 text-white"
+                    : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                 }`}
               >
                 {category.label}
@@ -112,6 +118,62 @@ function CourseStep() {
           </p>
         </div>
       )}
+      {/* 신청 유형 선택 */}
+      <div className="space-y-3">
+        <h3 className="font-semibold text-gray-800">신청 유형</h3>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {/* 본인 신청 버튼 (1명) */}
+          <button
+            type="button"
+            onClick={() =>
+              setEnrollmentType(
+                enrollmentType === "personal" ? null : "personal",
+              )
+            }
+            className={`cursor-pointer rounded-2xl border p-5 text-left transition ${
+              enrollmentType === "personal"
+                ? "border-blue-600 bg-blue-50 ring-2 ring-blue-100"
+                : "border-gray-200 bg-white hover:border-blue-300"
+            }`}
+          >
+            <p className="font-bold text-gray-900">개인 신청</p>
+            <p className="mt-1 text-sm text-gray-600">
+              해당 강의를 혼자 수강할 예정입니다.
+            </p>
+          </button>
+          {/* 단체 신청 버튼 (2명 이상) */}
+          <button
+            type="button"
+            onClick={() =>
+              setEnrollmentType(enrollmentType === "group" ? null : "group")
+            }
+            className={`cursor-pointer rounded-2xl border p-5 text-left transition ${
+              enrollmentType === "group"
+                ? "border-blue-600 bg-blue-50 ring-2 ring-blue-100"
+                : "border-gray-200 bg-white hover:border-blue-300"
+            }`}
+          >
+            <p className="font-bold text-gray-900">단체 신청 (2명 이상)</p>
+            <p className="mt-1 text-sm text-gray-600">
+              해당 강의를 단체로 수강할 예정입니다.
+            </p>
+          </button>
+        </div>
+      </div>
+      {/* 다음 단계 버튼 */}
+      <div className="flex justify-end border-t border-gray-200 pt-6">
+        <button
+          type="button"
+          disabled={!canGoNext}
+          className={`rounded-xl px-5 py-3 text-sm font-semibold transition ${
+            canGoNext
+              ? "cursor-pointer bg-gray-900 text-white hover:bg-gray-800"
+              : "cursor-not-allowed bg-gray-200 text-gray-500"
+          }`}
+        >
+          다음 단계
+        </button>
+      </div>
     </section>
   );
 }
