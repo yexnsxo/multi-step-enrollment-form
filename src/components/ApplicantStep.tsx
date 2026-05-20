@@ -1,6 +1,12 @@
 import { useState, useRef } from "react";
 import type { EnrollmentType } from "../types/enrollment";
 import type { Participant } from "../types/applicant";
+import { formatPhoneNumber } from "../utils/format";
+import {
+  areParticipantsValid,
+  hasDuplicateEmails,
+  isValidEmail,
+} from "../utils/validation";
 
 interface ApplicantStepProps {
   enrollmentType: EnrollmentType | null;
@@ -23,18 +29,6 @@ function ApplicantStep({ enrollmentType, onPrev }: ApplicantStepProps) {
 
   const [toastMessage, setToastMessage] = useState("");
   const toastTimerRef = useRef<number | null>(null);
-
-  // 전화번호 010-0000-0000 형태로 자동 포맷팅
-  const formatPhoneNumber = (value: string) => {
-    const onlyNumbers = value.replace(/[^0-9]/g, "");
-    if (onlyNumbers.length <= 3) {
-      return onlyNumbers;
-    }
-    if (onlyNumbers.length <= 7) {
-      return `${onlyNumbers.slice(0, 3)}-${onlyNumbers.slice(3)}`;
-    }
-    return `${onlyNumbers.slice(0, 3)}-${onlyNumbers.slice(3, 7)}-${onlyNumbers.slice(7, 11)}`;
-  };
 
   // 토스트 함수
   const showToast = (message: string) => {
@@ -94,11 +88,6 @@ function ApplicantStep({ enrollmentType, onPrev }: ApplicantStepProps) {
     );
   };
 
-  // 이메일 검증 함수 (example@email.com 형태)
-  const isValidEmail = (email: string) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
-
   // 공통 정보 검증
   const isNameValid = name.trim().length >= 2; // 공백 제거 후 2글자 이상
   const isEmailValid = isValidEmail(email);
@@ -108,20 +97,11 @@ function ApplicantStep({ enrollmentType, onPrev }: ApplicantStepProps) {
   const isGroupEnrollment = enrollmentType === "group";
   const isGroupNameValid = groupName.trim().length > 0;
 
-  const areParticipantsValid = participants.every(
-    (participant) =>
-      participant.name.trim().length > 0 && isValidEmail(participant.email),
-  );
-
-  const participantEmails = participants
-    .map((participant) => participant.email.trim())
-    .filter(Boolean);
-
-  const hasDuplicateParticipantEmail =
-    participantEmails.length !== new Set(participantEmails).size;
-
+  const hasDuplicateParticipantEmail = hasDuplicateEmails(participants);
   const isGroupInfoValid =
-    isGroupNameValid && areParticipantsValid && !hasDuplicateParticipantEmail;
+    isGroupNameValid &&
+    areParticipantsValid(participants) &&
+    !hasDuplicateParticipantEmail;
 
   const isBasicInfoValid = isNameValid && isEmailValid && isPhoneValid;
 
