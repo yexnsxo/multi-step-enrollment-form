@@ -13,6 +13,9 @@ function ApplicantStep({ enrollmentType, onPrev }: ApplicantStepProps) {
   const [phone, setPhone] = useState("");
   const [motivation, setMotivation] = useState("");
 
+  const [groupName, setGroupName] = useState("");
+  const [headCount, setHeadCount] = useState(2);
+
   // 전화번호 010-0000-0000 형태로 자동 포맷팅
   const formatPhoneNumber = (value: string) => {
     const onlyNumbers = value.replace(/[^0-9]/g, "");
@@ -31,6 +34,10 @@ function ApplicantStep({ enrollmentType, onPrev }: ApplicantStepProps) {
 
   const canGoNext = isNameValid && isEmailValid && isPhoneValid;
   const isGroupEnrollment = enrollmentType === "group";
+  const participants = Array.from(
+    { length: headCount },
+    (_, index) => index + 1,
+  );
   return (
     <section className="space-y-6">
       {/* 이전 단계 버튼 */}
@@ -153,6 +160,8 @@ function ApplicantStep({ enrollmentType, onPrev }: ApplicantStepProps) {
             <input
               id="groupName"
               type="text"
+              value={groupName}
+              onChange={(event) => setGroupName(event.target.value)}
               placeholder="단체명을 입력해주세요."
               className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-600"
             />
@@ -170,9 +179,65 @@ function ApplicantStep({ enrollmentType, onPrev }: ApplicantStepProps) {
               id="headCount"
               type="number"
               min={2}
+              max={10}
+              value={headCount}
+              onChange={(event) => {
+                const value = Number(event.target.value);
+                if (value < 2) {
+                  setHeadCount(2);
+                  return;
+                }
+                if (value > 10) {
+                  setHeadCount(10);
+                  return;
+                }
+                setHeadCount(value);
+              }}
               placeholder="2명 이상 입력해주세요."
               className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-600"
             />
+          </div>
+
+          {/* 참가자 명단 입력 */}
+          <div className="space-y-3">
+            <h4 className="text-sm font-bold text-gray-800">참가자 명단</h4>
+            <div className="space-y-3">
+              {participants.map((participantNumber) => (
+                <div
+                  key={participantNumber}
+                  className="grid gap-3 rounded-xl border border-blue-100 bg-white p-4 sm:grid-cols-2"
+                >
+                  <div>
+                    <label
+                      htmlFor={`participant-name-${participantNumber}`}
+                      className="mb-2 block text-sm font-semibold text-gray-800"
+                    >
+                      참가자 {participantNumber} 이름
+                    </label>
+                    <input
+                      id={`participant-name-${participantNumber}`}
+                      type="text"
+                      placeholder="이름"
+                      className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-600"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor={`participant-email-${participantNumber}`}
+                      className="mb-2 block text-sm font-semibold text-gray-800"
+                    >
+                      참가자 {participantNumber} 이메일
+                    </label>
+                    <input
+                      id={`participant-email-${participantNumber}`}
+                      type="email"
+                      placeholder="example@email.com"
+                      className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-600"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}
