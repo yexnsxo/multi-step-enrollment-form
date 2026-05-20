@@ -133,7 +133,7 @@ function ApplicantStep({ enrollmentType, onPrev }: ApplicantStepProps) {
     <section className="space-y-6">
       {/* 토스트 메시지 */}
       {toastMessage && (
-        <div className="fixed top-6 left-1/2 z-50 -translate-x-1/2 rounded-xl bg-blue-100 px-5 py-3 text-sm font-semibold text-gray-900 shadow-lg">
+        <div className="fixed top-6 left-1/2 z-50 -translate-x-1/2 rounded-xl bg-red-100 px-5 py-3 text-sm font-semibold text-gray-900 shadow-lg">
           🚨 {toastMessage}
         </div>
       )}
