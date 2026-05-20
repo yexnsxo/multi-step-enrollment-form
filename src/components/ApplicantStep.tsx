@@ -10,17 +10,30 @@ import {
 
 interface ApplicantStepProps {
   enrollmentType: EnrollmentType | null;
+  applicant: {
+    name: string;
+    email: string;
+    phone: string;
+    motivation: string;
+  };
+  onChangeApplicant: (applicant: {
+    name: string;
+    email: string;
+    phone: string;
+    motivation: string;
+  }) => void;
   onPrev: () => void;
   onNext: () => void;
 }
 
 // 신청 정보 입력 단계 컴포넌트
-function ApplicantStep({ enrollmentType, onPrev, onNext }: ApplicantStepProps) {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [motivation, setMotivation] = useState("");
-
+function ApplicantStep({
+  enrollmentType,
+  applicant,
+  onChangeApplicant,
+  onPrev,
+  onNext,
+}: ApplicantStepProps) {
   const [groupName, setGroupName] = useState("");
   const [headCount, setHeadCount] = useState(2);
   const [participants, setParticipants] = useState<Participant[]>([
@@ -90,9 +103,9 @@ function ApplicantStep({ enrollmentType, onPrev, onNext }: ApplicantStepProps) {
   };
 
   // 공통 정보 검증
-  const isNameValid = name.trim().length >= 2; // 공백 제거 후 2글자 이상
-  const isEmailValid = isValidEmail(email);
-  const isPhoneValid = /^010-\d{4}-\d{4}$/.test(phone); // 010-1234-5678 형태
+  const isNameValid = applicant.name.trim().length >= 2; // 공백 제거 후 2글자 이상
+  const isEmailValid = isValidEmail(applicant.email); // example@mail.com 형태
+  const isPhoneValid = /^010-\d{4}-\d{4}$/.test(applicant.phone); // 010-1234-5678 형태
 
   // 단체 정보 검증
   const isGroupEnrollment = enrollmentType === "group";
@@ -154,8 +167,13 @@ function ApplicantStep({ enrollmentType, onPrev, onNext }: ApplicantStepProps) {
           <input
             id="name"
             type="text"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
+            value={applicant.name}
+            onChange={(event) =>
+              onChangeApplicant({
+                ...applicant,
+                name: event.target.value,
+              })
+            }
             placeholder="이름을 입력해주세요."
             className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-600"
           />
@@ -172,8 +190,13 @@ function ApplicantStep({ enrollmentType, onPrev, onNext }: ApplicantStepProps) {
           <input
             id="email"
             type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
+            value={applicant.email}
+            onChange={(event) =>
+              onChangeApplicant({
+                ...applicant,
+                email: event.target.value,
+              })
+            }
             placeholder="example@email.com"
             className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-600"
           />
@@ -190,9 +213,12 @@ function ApplicantStep({ enrollmentType, onPrev, onNext }: ApplicantStepProps) {
           <input
             id="phone"
             type="tel"
-            value={phone}
+            value={applicant.phone}
             onChange={(event) =>
-              setPhone(formatPhoneNumber(event.target.value))
+              onChangeApplicant({
+                ...applicant,
+                phone: formatPhoneNumber(event.target.value),
+              })
             }
             maxLength={13}
             placeholder="010-1234-5678"
@@ -210,8 +236,13 @@ function ApplicantStep({ enrollmentType, onPrev, onNext }: ApplicantStepProps) {
           </label>
           <textarea
             id="motivation"
-            value={motivation}
-            onChange={(event) => setMotivation(event.target.value)}
+            value={applicant.motivation}
+            onChange={(event) =>
+              onChangeApplicant({
+                ...applicant,
+                motivation: event.target.value,
+              })
+            }
             placeholder="수강 동기를 입력해주세요."
             rows={4}
             className="w-full resize-none rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-600"

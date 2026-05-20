@@ -4,6 +4,12 @@ import type { EnrollmentType } from "../types/enrollment";
 interface ConfirmStepProps {
   selectedCourse: Course | null;
   enrollmentType: EnrollmentType | null;
+  applicant: {
+    name: string;
+    email: string;
+    phone: string;
+    motivation: string;
+  };
   onPrev: () => void;
 }
 
@@ -11,6 +17,7 @@ interface ConfirmStepProps {
 function ConfirmStep({
   selectedCourse,
   enrollmentType,
+  applicant,
   onPrev,
 }: ConfirmStepProps) {
   const enrollmentTypeLabel =
@@ -73,6 +80,28 @@ function ConfirmStep({
       <div className="rounded-2xl border border-gray-200 bg-white p-5">
         <h3 className="font-bold text-gray-900">신청 유형</h3>
         <p className="mt-4 text-sm text-gray-700">{enrollmentTypeLabel}</p>
+      </div>
+
+      {/* 신청자 정보 */}
+      <div className="rounded-2xl border border-gray-200 bg-white p-5">
+        <h3 className="font-bold text-gray-900">
+          {enrollmentType === "group" ? "대표 신청자 정보" : "신청자 정보"}
+        </h3>
+        <div className="mt-4 space-y-2 text-sm text-gray-700">
+          <p>
+            <span className="font-semibold">이름:</span> {applicant.name}
+          </p>
+          <p>
+            <span className="font-semibold">이메일:</span> {applicant.email}
+          </p>
+          <p>
+            <span className="font-semibold">전화번호:</span> {applicant.phone}
+          </p>
+          <p>
+            <span className="font-semibold">수강 동기:</span>{" "}
+            {applicant.motivation.trim() || "작성하지 않음"}
+          </p>
+        </div>
       </div>
 
       {/* 제출 버튼 */}

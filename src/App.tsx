@@ -12,6 +12,14 @@ function App() {
   const [enrollmentType, setEnrollmentType] = useState<EnrollmentType | null>(
     null,
   );
+
+  const [applicant, setApplicant] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    motivation: "",
+  });
+
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-8">
       <div className="mx-auto max-w-5xl">
@@ -42,6 +50,8 @@ function App() {
           {currentStep === 2 && (
             <ApplicantStep
               enrollmentType={enrollmentType}
+              applicant={applicant}
+              onChangeApplicant={setApplicant}
               onPrev={() => setCurrentStep(1)}
               onNext={() => setCurrentStep(3)}
             />
@@ -50,6 +60,7 @@ function App() {
             <ConfirmStep
               selectedCourse={selectedCourse}
               enrollmentType={enrollmentType}
+              applicant={applicant}
               onPrev={() => setCurrentStep(2)}
             />
           )}
