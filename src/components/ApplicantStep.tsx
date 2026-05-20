@@ -1,12 +1,13 @@
 import { useState, useRef } from "react";
 import type { EnrollmentType } from "../types/enrollment";
+import type { Participant } from "../types/applicant";
 
 interface ApplicantStepProps {
   enrollmentType: EnrollmentType | null;
   onPrev: () => void;
 }
 
-// 수강생 정보 입력 단계 컴포넌트
+// 신청 정보 입력 단계 컴포넌트
 function ApplicantStep({ enrollmentType, onPrev }: ApplicantStepProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -15,6 +16,10 @@ function ApplicantStep({ enrollmentType, onPrev }: ApplicantStepProps) {
 
   const [groupName, setGroupName] = useState("");
   const [headCount, setHeadCount] = useState(2);
+  const [participants, setParticipants] = useState<Participant[]>([
+    { name: "", email: "" },
+    { name: "", email: "" },
+  ]);
 
   const [toastMessage, setToastMessage] = useState("");
   const toastTimerRef = useRef<number | null>(null);
@@ -42,16 +47,88 @@ function ApplicantStep({ enrollmentType, onPrev }: ApplicantStepProps) {
     }, 2000);
   };
 
+  // 신청 인원 변경 시 참가자 입력 배열 길이 조정
+  const updateHeadCount = (value: number) => {
+    if (value < 2) {
+      setHeadCount(2);
+      setParticipants((prevParticipants) =>
+        prevParticipants
+          .slice(0, 2)
+          .concat(
+            Array.from(
+              { length: Math.max(0, 2 - prevParticipants.length) },
+              () => ({ name: "", email: "" }),
+            ),
+          ),
+      );
+      showToast("단체 신청은 최소 2명부터 가능해요!");
+      return;
+    }
+
+    if (value > 10) {
+      setHeadCount(10);
+      setParticipants((prevParticipants) =>
+        prevParticipants
+          .slice(0, 10)
+          .concat(
+            Array.from(
+              { length: Math.max(0, 10 - prevParticipants.length) },
+              () => ({ name: "", email: "" }),
+            ),
+          ),
+      );
+      showToast("최대 10명까지만 신청할 수 있어요!");
+      return;
+    }
+
+    setHeadCount(value);
+    setParticipants((prevParticipants) =>
+      prevParticipants
+        .slice(0, value)
+        .concat(
+          Array.from(
+            { length: Math.max(0, value - prevParticipants.length) },
+            () => ({ name: "", email: "" }),
+          ),
+        ),
+    );
+  };
+
+  // 이메일 검증 함수 (example@email.com 형태)
+  const isValidEmail = (email: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  // 공통 정보 검증
   const isNameValid = name.trim().length >= 2; // 공백 제거 후 2글자 이상
-  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); // example@email.com 형태
+  const isEmailValid = isValidEmail(email);
   const isPhoneValid = /^010-\d{4}-\d{4}$/.test(phone); // 010-1234-5678 형태
 
-  const canGoNext = isNameValid && isEmailValid && isPhoneValid;
+  // 단체 정보 검증
   const isGroupEnrollment = enrollmentType === "group";
-  const participants = Array.from(
-    { length: headCount },
-    (_, index) => index + 1,
+  const isGroupNameValid = groupName.trim().length > 0;
+
+  const areParticipantsValid = participants.every(
+    (participant) =>
+      participant.name.trim().length > 0 && isValidEmail(participant.email),
   );
+
+  const participantEmails = participants
+    .map((participant) => participant.email.trim())
+    .filter(Boolean);
+
+  const hasDuplicateParticipantEmail =
+    participantEmails.length !== new Set(participantEmails).size;
+
+  const isGroupInfoValid =
+    isGroupNameValid && areParticipantsValid && !hasDuplicateParticipantEmail;
+
+  const isBasicInfoValid = isNameValid && isEmailValid && isPhoneValid;
+
+  const canGoNext = isGroupEnrollment
+    ? isBasicInfoValid && isGroupInfoValid
+    : isBasicInfoValid;
+
   return (
     <section className="space-y-6">
       {/* 토스트 메시지 */}
@@ -74,10 +151,12 @@ function ApplicantStep({ enrollmentType, onPrev }: ApplicantStepProps) {
       {/* 상단 안내 영역 */}
       <div>
         <h2 className="text-xl font-bold text-gray-900">
-          [2단계] 수강생 정보 입력 ✔️
+          [2단계] 신청 정보 입력 ✔️
         </h2>
         <p className="mt-2 text-sm text-gray-600">
-          수강 신청에 필요한 기본 정보를 입력해주세요.
+          {isGroupEnrollment
+            ? "대표 신청자분의 정보를 입력해주세요."
+            : "수강 신청에 필요한 기본 정보를 입력해주세요."}
         </p>
       </div>
 
@@ -199,20 +278,7 @@ function ApplicantStep({ enrollmentType, onPrev }: ApplicantStepProps) {
               id="headCount"
               type="number"
               value={headCount}
-              onChange={(event) => {
-                const value = Number(event.target.value);
-                if (value < 2) {
-                  setHeadCount(2);
-                  showToast("단체 신청은 최소 2명부터 가능해요!");
-                  return;
-                }
-                if (value > 10) {
-                  setHeadCount(10);
-                  showToast("최대 10명까지만 신청할 수 있어요!");
-                  return;
-                }
-                setHeadCount(value);
-              }}
+              onChange={(event) => updateHeadCount(Number(event.target.value))}
               placeholder="2명 이상 입력해주세요."
               className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-600"
             />
@@ -221,42 +287,65 @@ function ApplicantStep({ enrollmentType, onPrev }: ApplicantStepProps) {
           {/* 참가자 명단 입력 */}
           <div className="space-y-3">
             <h4 className="text-sm font-bold text-gray-800">참가자 명단</h4>
+            <p className="text-sm text-blue-700">
+              실제 수강할 참가자 정보를 입력해주세요.
+            </p>
             <div className="space-y-3">
-              {participants.map((participantNumber) => (
-                <div
-                  key={participantNumber}
-                  className="grid gap-3 rounded-xl border border-blue-100 bg-white p-4 sm:grid-cols-2"
-                >
-                  <div>
-                    <label
-                      htmlFor={`participant-name-${participantNumber}`}
-                      className="mb-2 block text-sm font-semibold text-gray-800"
-                    >
-                      참가자 {participantNumber} 이름
-                    </label>
-                    <input
-                      id={`participant-name-${participantNumber}`}
-                      type="text"
-                      placeholder="이름"
-                      className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-600"
-                    />
+              {participants.map((participant, index) => {
+                const participantNumber = index + 1;
+                return (
+                  <div
+                    key={participantNumber}
+                    className="grid gap-3 rounded-xl border border-blue-100 bg-white p-4 sm:grid-cols-2"
+                  >
+                    <div>
+                      <label
+                        htmlFor={`participant-name-${participantNumber}`}
+                        className="mb-2 block text-sm font-semibold text-gray-800"
+                      >
+                        참가자 {participantNumber} 이름
+                      </label>
+                      <input
+                        id={`participant-name-${participantNumber}`}
+                        type="text"
+                        value={participant.name}
+                        onChange={(event) => {
+                          const nextParticipants = [...participants];
+                          nextParticipants[index].name = event.target.value;
+                          setParticipants(nextParticipants);
+                        }}
+                        placeholder="이름"
+                        className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-600"
+                      />
+                    </div>
+                    <div>
+                      <label
+                        htmlFor={`participant-email-${participantNumber}`}
+                        className="mb-2 block text-sm font-semibold text-gray-800"
+                      >
+                        참가자 {participantNumber} 이메일
+                      </label>
+                      <input
+                        id={`participant-email-${participantNumber}`}
+                        type="email"
+                        value={participant.email}
+                        onChange={(event) => {
+                          const nextParticipants = [...participants];
+                          nextParticipants[index].email = event.target.value;
+                          setParticipants(nextParticipants);
+                        }}
+                        placeholder="example@email.com"
+                        className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-600"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label
-                      htmlFor={`participant-email-${participantNumber}`}
-                      className="mb-2 block text-sm font-semibold text-gray-800"
-                    >
-                      참가자 {participantNumber} 이메일
-                    </label>
-                    <input
-                      id={`participant-email-${participantNumber}`}
-                      type="email"
-                      placeholder="example@email.com"
-                      className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-600"
-                    />
-                  </div>
-                </div>
-              ))}
+                );
+              })}
+              {hasDuplicateParticipantEmail && (
+                <p className="text-sm font-medium text-red-600">
+                  참가자 이메일은 중복될 수 없어요!
+                </p>
+              )}
             </div>
           </div>
         </div>
