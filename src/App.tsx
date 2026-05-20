@@ -38,7 +38,9 @@ function App() {
               onNext={() => setCurrentStep(2)}
             />
           )}
-          {currentStep === 2 && <ApplicantStep />}
+          {currentStep === 2 && (
+            <ApplicantStep onPrev={() => setCurrentStep(1)} />
+          )}
         </div>
       </div>
     </main>

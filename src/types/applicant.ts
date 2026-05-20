@@ -3,7 +3,7 @@ export interface Applicant {
   name: string;
   email: string;
   phone: string;
-  motivation: string;
+  motivation?: string;
 }
 
 // 단체 신청 시 참가자 정보
