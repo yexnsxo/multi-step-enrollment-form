@@ -5,6 +5,7 @@ import CourseStep from "./components/CourseStep";
 import type { Course } from "./types/course";
 import type { EnrollmentType } from "./types/enrollment";
 import ConfirmStep from "./components/ConfirmStep";
+import CompleteStep from "./components/CompleteStep";
 
 function App() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -73,8 +74,10 @@ function App() {
               applicant={applicant}
               groupInfo={groupInfo}
               onPrev={() => setCurrentStep(2)}
+              onSubmit={() => setCurrentStep(4)}
             />
           )}
+          {currentStep === 4 && <CompleteStep />}
         </div>
       </div>
     </main>

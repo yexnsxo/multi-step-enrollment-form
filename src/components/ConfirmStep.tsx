@@ -17,6 +17,7 @@ interface ConfirmStepProps {
     participants: Participant[];
   };
   onPrev: () => void;
+  onSubmit: () => void;
 }
 
 // 신청 내용 확인 단계 컴포넌트
@@ -26,6 +27,7 @@ function ConfirmStep({
   applicant,
   groupInfo,
   onPrev,
+  onSubmit,
 }: ConfirmStepProps) {
   const enrollmentTypeLabel =
     enrollmentType === "group" ? "단체 신청" : "개인 신청";
@@ -154,6 +156,7 @@ function ConfirmStep({
       <div className="flex justify-end border-t border-gray-200 pt-6">
         <button
           type="button"
+          onClick={onSubmit}
           className="cursor-pointer rounded-xl bg-gray-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-gray-800"
         >
           제출
