@@ -1,0 +1,60 @@
+import type { Course } from "../types/course";
+
+export const categories = [
+  { value: "all", label: "전체" },
+  { value: "development", label: "개발" },
+  { value: "design", label: "디자인" },
+  { value: "marketing", label: "마케팅" },
+  { value: "business", label: "비즈니스" },
+] as const;
+
+export const courses: Course[] = [
+  {
+    id: "course-1",
+    title: "React 실전 프로젝트",
+    description: "React와 TypeScript를 활용해 실무형 프로젝트를 구현합니다.",
+    category: "development",
+    price: 120000,
+    maxCapacity: 30,
+    currentEnrollment: 24,
+    startDate: "2026-06-01",
+    endDate: "2026-06-30",
+    instructor: "이연서",
+  },
+  {
+    id: "course-2",
+    title: "UX/UI 디자인 입문",
+    description: "사용자 흐름을 기반으로 화면을 설계하는 방법을 배웁니다.",
+    category: "design",
+    price: 90000,
+    maxCapacity: 20,
+    currentEnrollment: 20,
+    startDate: "2026-06-10",
+    endDate: "2026-07-10",
+    instructor: "하지민",
+  },
+  {
+    id: "course-3",
+    title: "데이터 기반 마케팅 전략",
+    description: "사용자 데이터를 활용해 마케팅 전략을 수립합니다.",
+    category: "marketing",
+    price: 100000,
+    maxCapacity: 25,
+    currentEnrollment: 23,
+    startDate: "2026-07-01",
+    endDate: "2026-07-31",
+    instructor: "최서아",
+  },
+  {
+    id: "course-4",
+    title: "비즈니스 모델 설계",
+    description: "서비스의 수익 구조와 운영 전략을 설계합니다.",
+    category: "business",
+    price: 110000,
+    maxCapacity: 15,
+    currentEnrollment: 7,
+    startDate: "2026-06-15",
+    endDate: "2026-07-15",
+    instructor: "김도연",
+  },
+];
