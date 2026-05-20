@@ -28,6 +28,7 @@ function App() {
       { name: "", email: "" },
     ],
   });
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-8">
@@ -73,6 +74,8 @@ function App() {
               enrollmentType={enrollmentType}
               applicant={applicant}
               groupInfo={groupInfo}
+              agreedToTerms={agreedToTerms}
+              onChangeAgreedToTerms={setAgreedToTerms}
               onPrev={() => setCurrentStep(2)}
               onSubmit={() => setCurrentStep(4)}
             />

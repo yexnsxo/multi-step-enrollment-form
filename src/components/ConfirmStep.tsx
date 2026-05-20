@@ -16,6 +16,8 @@ interface ConfirmStepProps {
     headCount: number;
     participants: Participant[];
   };
+  agreedToTerms: boolean;
+  onChangeAgreedToTerms: (checked: boolean) => void;
   onPrev: () => void;
   onSubmit: () => void;
 }
@@ -26,6 +28,8 @@ function ConfirmStep({
   enrollmentType,
   applicant,
   groupInfo,
+  agreedToTerms,
+  onChangeAgreedToTerms,
   onPrev,
   onSubmit,
 }: ConfirmStepProps) {
@@ -151,15 +155,35 @@ function ConfirmStep({
           </div>
         </div>
       )}
+      {/* 이용약관 동의 */}
+      <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-gray-200 bg-gray-50 p-4">
+        <input
+          type="checkbox"
+          checked={agreedToTerms}
+          onChange={(event) => onChangeAgreedToTerms(event.target.checked)}
+          className="mt-1 h-4 w-4 cursor-pointer"
+        />
+        <span className="text-sm text-gray-700">
+          <span className="font-semibold text-gray-900">
+            이용약관 및 개인정보 수집
+          </span>
+          에 동의합니다. <span className="text-red-500">(필수)</span>
+        </span>
+      </label>
 
       {/* 제출 버튼 */}
       <div className="flex justify-end border-t border-gray-200 pt-6">
         <button
           type="button"
+          disabled={!agreedToTerms}
           onClick={onSubmit}
-          className="cursor-pointer rounded-xl bg-gray-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-gray-800"
+          className={`rounded-xl px-5 py-3 text-sm font-semibold transition ${
+            agreedToTerms
+              ? "cursor-pointer bg-gray-900 text-white hover:bg-gray-800"
+              : "cursor-not-allowed bg-gray-200 text-gray-500"
+          }`}
         >
-          제출
+          신청 제출
         </button>
       </div>
     </section>
