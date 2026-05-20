@@ -11,10 +11,11 @@ import {
 interface ApplicantStepProps {
   enrollmentType: EnrollmentType | null;
   onPrev: () => void;
+  onNext: () => void;
 }
 
 // 신청 정보 입력 단계 컴포넌트
-function ApplicantStep({ enrollmentType, onPrev }: ApplicantStepProps) {
+function ApplicantStep({ enrollmentType, onPrev, onNext }: ApplicantStepProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -336,6 +337,7 @@ function ApplicantStep({ enrollmentType, onPrev }: ApplicantStepProps) {
         <button
           type="button"
           disabled={!canGoNext}
+          onClick={onNext}
           className={`rounded-xl px-5 py-3 text-sm font-semibold transition ${
             canGoNext
               ? "cursor-pointer bg-gray-900 text-white hover:bg-gray-800"
