@@ -6,6 +6,7 @@ import {
   areParticipantsValid,
   hasDuplicateEmails,
   isValidEmail,
+  isValidName,
 } from "../utils/validation";
 
 interface ApplicantStepProps {
@@ -101,8 +102,7 @@ function ApplicantStep({
   };
 
   // 공통 정보 검증
-  const isNameValid =
-    applicant.name.trim().length >= 2 && applicant.name.trim().length <= 20; // 공백 제거 후 2글자 이상 20글자 미만
+  const isNameValid = isValidName(applicant.name); // 공백 제거 후 2~20자
   const isEmailValid = isValidEmail(applicant.email); // example@mail.com 형태
   const isPhoneValid = /^010-\d{4}-\d{4}$/.test(applicant.phone); // 010-1234-5678 형태
 
@@ -176,13 +176,16 @@ function ApplicantStep({
                 name: event.target.value,
               })
             }
+            minLength={2}
             maxLength={20}
             placeholder="이름을 입력해주세요."
             className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-600"
           />
-          <p className="mt-1 text-xs text-gray-500">
-            이름은 2~20자 이내로 입력해주세요.
-          </p>
+          {applicant.name.length > 0 && !isNameValid && (
+            <p className="mt-1 text-xs font-medium text-red-600">
+              이름은 2~20자로 입력해주세요.
+            </p>
+          )}
         </div>
 
         {/* 이메일 입력 */}
@@ -206,6 +209,11 @@ function ApplicantStep({
             placeholder="example@email.com"
             className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-600"
           />
+          {applicant.email.length > 0 && !isEmailValid && (
+            <p className="mt-1 text-xs font-medium text-red-600">
+              올바른 이메일 형식으로 입력해주세요.
+            </p>
+          )}
         </div>
 
         {/* 전화번호 입력 */}
@@ -230,6 +238,11 @@ function ApplicantStep({
             placeholder="010-1234-5678"
             className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-600"
           />
+          {applicant.phone.length > 0 && !isPhoneValid && (
+            <p className="mt-1 text-xs font-medium text-red-600">
+              전화번호는 010-0000-0000 형식으로 입력해주세요.
+            </p>
+          )}
         </div>
 
         {/* 수강 동기 입력 */}
@@ -291,6 +304,12 @@ function ApplicantStep({
               placeholder="단체명을 입력해주세요."
               className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-600"
             />
+            {groupInfo.groupName.length > 0 &&
+              groupInfo.groupName.trim().length === 0 && (
+                <p className="mt-1 text-xs font-medium text-red-600">
+                  단체명을 입력해주세요.
+                </p>
+              )}
           </div>
 
           {/* 신청 인원 입력 */}
@@ -337,6 +356,8 @@ function ApplicantStep({
                         id={`participant-name-${participantNumber}`}
                         type="text"
                         value={participant.name}
+                        maxLength={20}
+                        minLength={2}
                         onChange={(event) => {
                           const nextParticipants = [...groupInfo.participants];
                           nextParticipants[index] = {
@@ -351,6 +372,12 @@ function ApplicantStep({
                         placeholder="이름"
                         className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-600"
                       />
+                      {participant.name.length > 0 &&
+                        !isValidName(participant.name) && (
+                          <p className="mt-1 text-xs font-medium text-red-600">
+                            참가자 이름은 2~20자로 입력해주세요.
+                          </p>
+                        )}
                     </div>
                     <div>
                       <label
@@ -377,6 +404,12 @@ function ApplicantStep({
                         placeholder="example@email.com"
                         className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-600"
                       />
+                      {participant.email.length > 0 &&
+                        !isValidEmail(participant.email) && (
+                          <p className="mt-1 text-xs font-medium text-red-600">
+                            올바른 이메일 형식으로 입력해주세요.
+                          </p>
+                        )}
                     </div>
                   </div>
                 );

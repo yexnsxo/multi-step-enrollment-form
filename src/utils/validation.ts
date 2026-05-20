@@ -5,11 +5,17 @@ export const isValidEmail = (email: string) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 };
 
+// 이름 2~20자 검증
+export const isValidName = (name: string) => {
+  const trimmedName = name.trim();
+  return trimmedName.length >= 2 && trimmedName.length <= 20;
+};
+
 // 참가자 정보 검증
 export const areParticipantsValid = (participants: Participant[]) => {
   return participants.every(
     (participant) =>
-      participant.name.trim().length > 0 && isValidEmail(participant.email),
+      isValidName(participant.name) && isValidEmail(participant.email),
   );
 };
 
