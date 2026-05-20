@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import type { EnrollmentType } from "../types/enrollment";
 import type { Participant } from "../types/applicant";
 import { formatPhoneNumber } from "../utils/format";
@@ -47,21 +47,8 @@ function ApplicantStep({
   onPrev,
   onNext,
 }: ApplicantStepProps) {
-  const [toastMessage, setToastMessage] = useState("");
-  const toastTimerRef = useRef<number | null>(null);
-
-  // 토스트 함수
-  const showToast = (message: string) => {
-    setToastMessage(message);
-    if (toastTimerRef.current) {
-      clearTimeout(toastTimerRef.current);
-    }
-    toastTimerRef.current = window.setTimeout(() => {
-      setToastMessage("");
-    }, 2000);
-  };
-
   // 신청 인원 변경 시 참가자 입력 배열 길이 조정
+  const [headCountErrorMessage, setHeadCountErrorMessage] = useState("");
   const updateHeadCount = (value: number) => {
     const getNextParticipants = (targetCount: number) => {
       return groupInfo.participants.slice(0, targetCount).concat(
@@ -80,7 +67,7 @@ function ApplicantStep({
         headCount: 2,
         participants: getNextParticipants(2),
       });
-      showToast("단체 신청은 최소 2명부터 가능해요!");
+      setHeadCountErrorMessage("단체 신청은 최소 2명부터 가능합니다.");
       return;
     }
 
@@ -90,9 +77,11 @@ function ApplicantStep({
         headCount: 10,
         participants: getNextParticipants(10),
       });
-      showToast("최대 10명까지만 신청할 수 있어요!");
+      setHeadCountErrorMessage("최대 10명까지만 신청할 수 있습니다.");
       return;
     }
+
+    setHeadCountErrorMessage("");
 
     onChangeGroupInfo({
       ...groupInfo,
@@ -127,12 +116,6 @@ function ApplicantStep({
 
   return (
     <section className="space-y-6">
-      {/* 토스트 메시지 */}
-      {toastMessage && (
-        <div className="fixed top-6 left-1/2 z-50 -translate-x-1/2 rounded-xl bg-red-100 px-5 py-3 text-sm font-semibold text-gray-900 shadow-lg">
-          🚨 {toastMessage}
-        </div>
-      )}
       {/* 이전 단계 버튼 */}
       <div>
         <button
@@ -328,6 +311,11 @@ function ApplicantStep({
               placeholder="2명 이상 입력해주세요."
               className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-600"
             />
+            {headCountErrorMessage && (
+              <p className="mt-1 text-xs font-medium text-red-600">
+                {headCountErrorMessage}
+              </p>
+            )}
           </div>
 
           {/* 참가자 명단 입력 */}
