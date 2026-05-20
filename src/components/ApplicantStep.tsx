@@ -306,7 +306,8 @@ function ApplicantStep({
           <div className="space-y-3">
             <h4 className="text-sm font-bold text-gray-800">참가자 명단</h4>
             <p className="text-sm text-blue-700">
-              실제 수강할 참가자 정보를 입력해주세요.
+              실제 수강할 참가자 정보를 입력해주세요. 대표 신청자가 수강생인
+              경우에도 참가자 명단에 포함해주세요.
             </p>
             <div className="space-y-3">
               {groupInfo.participants.map((participant, index) => {
