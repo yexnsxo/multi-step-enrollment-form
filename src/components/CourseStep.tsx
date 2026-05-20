@@ -3,16 +3,25 @@ import { categories, courses } from "../data/courses";
 import type { CourseCategory, Course } from "../types/course";
 import type { EnrollmentType } from "../types/enrollment";
 
+type CategoryFilter = CourseCategory | "all";
+interface CourseStepProps {
+  selectedCourse: Course | null;
+  enrollmentType: EnrollmentType | null;
+  onSelectCourse: (course: Course | null) => void;
+  onSelectEnrollmentType: (type: EnrollmentType | null) => void;
+  onNext: () => void;
+}
+
 // 강의 선택 단계 컴포넌트
-function CourseStep() {
-  type CategoryFilter = CourseCategory | "all";
+function CourseStep({
+  selectedCourse,
+  enrollmentType,
+  onSelectCourse,
+  onSelectEnrollmentType,
+  onNext,
+}: CourseStepProps) {
   const [selectedCategory, setSelectedCategory] =
     useState<CategoryFilter>("all");
-
-  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
-  const [enrollmentType, setEnrollmentType] = useState<EnrollmentType | null>(
-    null,
-  );
 
   const filteredCourses =
     selectedCategory === "all"
@@ -65,7 +74,7 @@ function CourseStep() {
           return (
             <div
               key={course.id}
-              onClick={() => setSelectedCourse(isSelected ? null : course)}
+              onClick={() => onSelectCourse(isSelected ? null : course)}
               className={`cursor-pointer rounded-2xl border bg-white p-5 shadow-sm transition ${
                 isSelected
                   ? "border-blue-600 ring-2 ring-blue-100"
@@ -126,7 +135,7 @@ function CourseStep() {
           <button
             type="button"
             onClick={() =>
-              setEnrollmentType(
+              onSelectEnrollmentType(
                 enrollmentType === "personal" ? null : "personal",
               )
             }
@@ -145,7 +154,9 @@ function CourseStep() {
           <button
             type="button"
             onClick={() =>
-              setEnrollmentType(enrollmentType === "group" ? null : "group")
+              onSelectEnrollmentType(
+                enrollmentType === "group" ? null : "group",
+              )
             }
             className={`cursor-pointer rounded-2xl border p-5 text-left transition ${
               enrollmentType === "group"
@@ -165,6 +176,7 @@ function CourseStep() {
         <button
           type="button"
           disabled={!canGoNext}
+          onClick={onNext}
           className={`rounded-xl px-5 py-3 text-sm font-semibold transition ${
             canGoNext
               ? "cursor-pointer bg-gray-900 text-white hover:bg-gray-800"
