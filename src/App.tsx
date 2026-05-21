@@ -98,6 +98,13 @@ function App() {
     }, 800);
   };
 
+  const steps = [
+    { step: 1, label: "강의 선택" },
+    { step: 2, label: "정보 입력" },
+    { step: 3, label: "확인 및 제출" },
+    { step: 4, label: "신청 완료" },
+  ];
+
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-8">
       <div className="mx-auto max-w-5xl">
@@ -113,6 +120,45 @@ function App() {
             원하는 강의를 선택하고 신청 정보를 입력해주세요.
           </p>
         </header>
+
+        {/* 신청 단계 인디케이터 */}
+        <div className="mb-6 rounded-3xl bg-white p-5 shadow-sm">
+          <ol className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {steps.map(({ step, label }) => {
+              const isActive = currentStep === step;
+              const isCompleted = currentStep > step;
+              return (
+                <li key={step} className="flex items-center gap-3">
+                  <div
+                    className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold ${
+                      isActive
+                        ? "bg-blue-600 text-white"
+                        : isCompleted
+                          ? "bg-blue-100 text-blue-700"
+                          : "bg-gray-100 text-gray-400"
+                    }`}
+                  >
+                    {isCompleted ? "✓" : step}
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400">{step}단계</p>
+                    <p
+                      className={`text-sm font-semibold ${
+                        isActive
+                          ? "text-blue-700"
+                          : isCompleted
+                            ? "text-gray-700"
+                            : "text-gray-400"
+                      }`}
+                    >
+                      {label}
+                    </p>
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
 
         {/* 신청 단계 영역 */}
         <div className="rounded-3xl bg-white p-6 shadow-sm">
