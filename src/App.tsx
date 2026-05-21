@@ -76,6 +76,8 @@ function App() {
               groupInfo={groupInfo}
               agreedToTerms={agreedToTerms}
               onChangeAgreedToTerms={setAgreedToTerms}
+              onEditCourse={() => setCurrentStep(1)}
+              onEditApplicant={() => setCurrentStep(2)}
               onPrev={() => setCurrentStep(2)}
               onSubmit={() => setCurrentStep(4)}
             />

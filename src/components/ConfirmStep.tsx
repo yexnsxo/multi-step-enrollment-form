@@ -18,6 +18,8 @@ interface ConfirmStepProps {
   };
   agreedToTerms: boolean;
   onChangeAgreedToTerms: (checked: boolean) => void;
+  onEditCourse: () => void;
+  onEditApplicant: () => void;
   onPrev: () => void;
   onSubmit: () => void;
 }
@@ -30,6 +32,8 @@ function ConfirmStep({
   groupInfo,
   agreedToTerms,
   onChangeAgreedToTerms,
+  onEditCourse,
+  onEditApplicant,
   onPrev,
   onSubmit,
 }: ConfirmStepProps) {
@@ -61,7 +65,16 @@ function ConfirmStep({
 
       {/* 선택한 강의 정보 */}
       <div className="rounded-2xl border border-gray-200 bg-white p-5">
-        <h3 className="font-bold text-gray-900">선택한 강의</h3>
+        <div className="flex items-center justify-between gap-4">
+          <h3 className="font-bold text-gray-900">선택한 강의</h3>
+          <button
+            type="button"
+            onClick={onEditCourse}
+            className="cursor-pointer text-sm font-semibold text-blue-600 hover:underline"
+          >
+            수정
+          </button>
+        </div>
 
         {selectedCourse ? (
           <div className="mt-4 space-y-2 text-sm text-gray-700">
@@ -91,15 +104,33 @@ function ConfirmStep({
 
       {/* 신청 유형 정보 */}
       <div className="rounded-2xl border border-gray-200 bg-white p-5">
-        <h3 className="font-bold text-gray-900">신청 유형</h3>
+        <div className="flex items-center justify-between gap-4">
+          <h3 className="font-bold text-gray-900">신청 유형</h3>
+          <button
+            type="button"
+            onClick={onEditCourse}
+            className="cursor-pointer text-sm font-semibold text-blue-600 hover:underline"
+          >
+            수정
+          </button>
+        </div>
         <p className="mt-4 text-sm text-gray-700">{enrollmentTypeLabel}</p>
       </div>
 
       {/* 신청자 정보 */}
       <div className="rounded-2xl border border-gray-200 bg-white p-5">
-        <h3 className="font-bold text-gray-900">
-          {enrollmentType === "group" ? "대표 신청자 정보" : "신청자 정보"}
-        </h3>
+        <div className="flex items-center justify-between gap-4">
+          <h3 className="font-bold text-gray-900">
+            {enrollmentType === "group" ? "대표 신청자 정보" : "신청자 정보"}
+          </h3>
+          <button
+            type="button"
+            onClick={onEditApplicant}
+            className="cursor-pointer text-sm font-semibold text-blue-600 hover:underline"
+          >
+            수정
+          </button>
+        </div>
         <div className="mt-4 space-y-2 text-sm text-gray-700">
           <p>
             <span className="font-semibold">이름:</span> {applicant.name}
@@ -120,7 +151,16 @@ function ConfirmStep({
       {/* 단체 신청 정보 */}
       {enrollmentType === "group" && (
         <div className="rounded-2xl border border-gray-200 bg-white p-5">
-          <h3 className="font-bold text-gray-900">단체 신청 정보</h3>
+          <div className="flex items-center justify-between gap-4">
+            <h3 className="font-bold text-gray-900">단체 신청 정보</h3>
+            <button
+              type="button"
+              onClick={onEditApplicant}
+              className="cursor-pointer text-sm font-semibold text-blue-600 hover:underline"
+            >
+              수정
+            </button>
+          </div>
 
           <div className="mt-4 space-y-2 text-sm text-gray-700">
             <p>
