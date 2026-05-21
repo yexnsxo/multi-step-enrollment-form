@@ -50,8 +50,7 @@ function ConfirmStep({
   isSubmitting,
   submitError,
 }: ConfirmStepProps) {
-  const enrollmentTypeLabel =
-    enrollmentType === "group" ? "단체 신청" : "개인 신청";
+  const enrollmentTypeLabel = enrollmentType === "group" ? "단체" : "개인";
 
   return (
     <section className="space-y-6">
@@ -107,27 +106,16 @@ function ConfirmStep({
               <span className="font-semibold">강사:</span>{" "}
               {selectedCourse.instructor}
             </p>
+            <p>
+              <span className="font-semibold">신청 유형:</span>{" "}
+              {enrollmentTypeLabel}
+            </p>
           </div>
         ) : (
           <p className="mt-4 text-sm text-red-600">
             선택한 강의 정보가 없습니다.
           </p>
         )}
-      </div>
-
-      {/* 신청 유형 정보 */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-5">
-        <div className="flex items-center justify-between gap-4">
-          <h3 className="font-bold text-gray-900">신청 유형</h3>
-          <button
-            type="button"
-            onClick={onEditCourse}
-            className="cursor-pointer text-sm font-semibold text-blue-600 hover:underline"
-          >
-            수정
-          </button>
-        </div>
-        <p className="mt-4 text-sm text-gray-700">{enrollmentTypeLabel}</p>
       </div>
 
       {/* 신청자 정보 */}
