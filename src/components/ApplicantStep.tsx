@@ -134,7 +134,7 @@ function ApplicantStep({
       {/* 상단 안내 영역 */}
       <div>
         <h2 className="text-xl font-bold text-gray-900">
-          [2단계] 신청 정보 입력 ✔️
+          [2단계] 신청 정보 입력 ✍🏻
         </h2>
         <p className="mt-2 text-sm text-gray-600">
           {isGroupEnrollment

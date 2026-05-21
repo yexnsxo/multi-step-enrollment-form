@@ -35,7 +35,7 @@ function CourseStep({
       {/* 상단 안내 영역 */}
       <div>
         <h2 className="text-xl font-bold text-gray-900">
-          [1단계] 강의 선택 ✔️
+          [1단계] 강의 선택 📚
         </h2>
         <p className="mt-2 text-sm text-gray-600">
           수강할 강의를 선택해주세요.
