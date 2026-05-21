@@ -14,6 +14,7 @@ interface CompleteStepProps {
   };
   groupInfo: {
     groupName: string;
+    contactPhone: string;
     headCount: number;
     participants: Participant[];
   };
@@ -86,7 +87,10 @@ function CompleteStep({
                 <span className="font-semibold">단체명:</span>{" "}
                 {groupInfo.groupName}
               </p>
-
+              <p>
+                <span className="font-semibold">담당자 연락처:</span>{" "}
+                {groupInfo.contactPhone}
+              </p>
               <p>
                 <span className="font-semibold">참가자 수:</span>{" "}
                 {groupInfo.participants.length}명

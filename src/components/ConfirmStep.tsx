@@ -21,6 +21,7 @@ interface ConfirmStepProps {
   };
   groupInfo: {
     groupName: string;
+    contactPhone: string;
     headCount: number;
     participants: Participant[];
   };
@@ -178,6 +179,10 @@ function ConfirmStep({
             <p>
               <span className="font-semibold">단체명:</span>{" "}
               {groupInfo.groupName}
+            </p>
+            <p>
+              <span className="font-semibold">담당자 연락처:</span>{" "}
+              {groupInfo.contactPhone}
             </p>
             <p>
               <span className="font-semibold">신청 인원:</span>{" "}
