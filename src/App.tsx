@@ -32,6 +32,7 @@ function App() {
   });
   const [groupInfo, setGroupInfo] = useState({
     groupName: "",
+    contactPhone: "",
     headCount: 2,
     participants: [
       { name: "", email: "" },

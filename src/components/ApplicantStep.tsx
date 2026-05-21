@@ -25,11 +25,13 @@ interface ApplicantStepProps {
   }) => void;
   groupInfo: {
     groupName: string;
+    contactPhone: string;
     headCount: number;
     participants: Participant[];
   };
   onChangeGroupInfo: (groupInfo: {
     groupName: string;
+    contactPhone: string;
     headCount: number;
     participants: Participant[];
   }) => void;
@@ -98,6 +100,7 @@ function ApplicantStep({
   // 단체 정보 검증
   const isGroupEnrollment = enrollmentType === "group";
   const isGroupNameValid = groupInfo.groupName.trim().length > 0;
+  const isContactPhoneValid = /^010-\d{4}-\d{4}$/.test(groupInfo.contactPhone);
 
   const hasDuplicateParticipantEmail = hasDuplicateEmails(
     groupInfo.participants,
@@ -105,6 +108,7 @@ function ApplicantStep({
 
   const isGroupInfoValid =
     isGroupNameValid &&
+    isContactPhoneValid &&
     areParticipantsValid(groupInfo.participants) &&
     !hasDuplicateParticipantEmail;
 
@@ -293,6 +297,35 @@ function ApplicantStep({
                   단체명을 입력해주세요.
                 </p>
               )}
+          </div>
+
+          {/* 담당자 연락처 입력 */}
+          <div>
+            <label
+              htmlFor="contactPhone"
+              className="mb-2 block text-sm font-semibold text-gray-800"
+            >
+              담당자 연락처
+            </label>
+            <input
+              id="contactPhone"
+              type="tel"
+              value={groupInfo.contactPhone}
+              onChange={(event) =>
+                onChangeGroupInfo({
+                  ...groupInfo,
+                  contactPhone: formatPhoneNumber(event.target.value),
+                })
+              }
+              maxLength={13}
+              placeholder="010-1234-5678"
+              className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-600"
+            />
+            {groupInfo.contactPhone.length > 0 && !isContactPhoneValid && (
+              <p className="mt-1 text-xs font-medium text-red-600">
+                담당자 연락처는 010-0000-0000 형식으로 입력해주세요.
+              </p>
+            )}
           </div>
 
           {/* 신청 인원 입력 */}
