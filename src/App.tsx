@@ -7,13 +7,23 @@ import type { EnrollmentType } from "./types/enrollment";
 import ConfirmStep from "./components/ConfirmStep";
 import CompleteStep from "./components/CompleteStep";
 
+type SubmitErrorCode = "COURSE_FULL" | "DUPLICATE_ENROLLMENT" | "INVALID_INPUT";
+
+interface SubmitError {
+  code: SubmitErrorCode;
+  message: string;
+  details?: Record<string, string>;
+}
+
 function App() {
+  // 강의 선택 단계
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [enrollmentType, setEnrollmentType] = useState<EnrollmentType | null>(
     null,
   );
 
+  // 수강생 정보 입력 단계
   const [applicant, setApplicant] = useState({
     name: "",
     email: "",
@@ -29,6 +39,64 @@ function App() {
     ],
   });
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+
+  // 제출 상태
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<SubmitError | null>(null);
+  const [enrollmentId, setEnrollmentId] = useState("");
+
+  // 수강 신청 mock 제출 함수
+  const handleSubmitEnrollment = () => {
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    setTimeout(() => {
+      const submitResult = Math.random();
+
+      // 정원 초과 에러
+      if (submitResult < 0.2) {
+        setSubmitError({
+          code: "COURSE_FULL",
+          message:
+            "선택한 강의의 정원이 마감되었습니다. 다른 강의를 선택해주세요.",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      // 중복 신청 에러
+      if (submitResult < 0.4) {
+        setSubmitError({
+          code: "DUPLICATE_ENROLLMENT",
+          message: "이미 신청한 강의입니다.",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      // 입력값 에러
+      if (submitResult < 0.6) {
+        setSubmitError({
+          code: "INVALID_INPUT",
+          message: "작성하신 내용을 다시 확인해주세요.",
+          details: {
+            name: "이름을 다시 확인해주세요.",
+            email: "이메일 형식을 다시 확인해주세요.",
+            phone: "전화번호 형식을 다시 확인해주세요.",
+          },
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      // 제출 성공
+      const newEnrollmentId = `LC-${Date.now()}`;
+
+      setEnrollmentId(newEnrollmentId);
+      setIsSubmitting(false);
+      setCurrentStep(4);
+    }, 800);
+  };
 
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-8">
@@ -79,10 +147,20 @@ function App() {
               onEditCourse={() => setCurrentStep(1)}
               onEditApplicant={() => setCurrentStep(2)}
               onPrev={() => setCurrentStep(2)}
-              onSubmit={() => setCurrentStep(4)}
+              onSubmit={handleSubmitEnrollment}
+              isSubmitting={isSubmitting}
+              submitError={submitError}
             />
           )}
-          {currentStep === 4 && <CompleteStep />}
+          {currentStep === 4 && (
+            <CompleteStep
+              enrollmentId={enrollmentId}
+              selectedCourse={selectedCourse}
+              enrollmentType={enrollmentType}
+              applicant={applicant}
+              groupInfo={groupInfo}
+            />
+          )}
         </div>
       </div>
     </main>

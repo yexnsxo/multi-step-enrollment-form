@@ -2,6 +2,14 @@ import type { Course } from "../types/course";
 import type { EnrollmentType } from "../types/enrollment";
 import type { Participant } from "../types/applicant";
 
+type SubmitErrorCode = "COURSE_FULL" | "DUPLICATE_ENROLLMENT" | "INVALID_INPUT";
+
+interface SubmitError {
+  code: SubmitErrorCode;
+  message: string;
+  details?: Record<string, string>;
+}
+
 interface ConfirmStepProps {
   selectedCourse: Course | null;
   enrollmentType: EnrollmentType | null;
@@ -22,6 +30,8 @@ interface ConfirmStepProps {
   onEditApplicant: () => void;
   onPrev: () => void;
   onSubmit: () => void;
+  isSubmitting: boolean;
+  submitError: SubmitError | null;
 }
 
 // 신청 내용 확인 단계 컴포넌트
@@ -36,6 +46,8 @@ function ConfirmStep({
   onEditApplicant,
   onPrev,
   onSubmit,
+  isSubmitting,
+  submitError,
 }: ConfirmStepProps) {
   const enrollmentTypeLabel =
     enrollmentType === "group" ? "단체 신청" : "개인 신청";
@@ -195,6 +207,7 @@ function ConfirmStep({
           </div>
         </div>
       )}
+
       {/* 이용약관 동의 */}
       <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-gray-200 bg-gray-50 p-4">
         <input
@@ -211,19 +224,39 @@ function ConfirmStep({
         </span>
       </label>
 
+      {/* 제출 에러 메시지 */}
+      {submitError && (
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-4">
+          <p className="text-sm font-bold text-red-700">
+            {submitError.message}
+          </p>
+
+          {submitError.code === "INVALID_INPUT" && submitError.details && (
+            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-red-600">
+              {Object.entries(submitError.details).map(([field, message]) => (
+                <li key={field}>{message}</li>
+              ))}
+            </ul>
+          )}
+          <p className="mt-2 text-xs text-red-500">
+            작성하신 정보는 유지됩니다. 안내 내용을 확인한 뒤 다시 시도해주세요!
+          </p>
+        </div>
+      )}
+
       {/* 제출 버튼 */}
       <div className="flex justify-end border-t border-gray-200 pt-6">
         <button
           type="button"
-          disabled={!agreedToTerms}
+          disabled={!agreedToTerms || isSubmitting}
           onClick={onSubmit}
           className={`rounded-xl px-5 py-3 text-sm font-semibold transition ${
-            agreedToTerms
+            agreedToTerms && !isSubmitting
               ? "cursor-pointer bg-gray-900 text-white hover:bg-gray-800"
               : "cursor-not-allowed bg-gray-200 text-gray-500"
           }`}
         >
-          신청 제출
+          {isSubmitting ? "제출 중..." : "제출"}
         </button>
       </div>
     </section>
