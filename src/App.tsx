@@ -1,5 +1,5 @@
 import "./App.css";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import ApplicantStep from "./components/ApplicantStep";
 import CourseStep from "./components/CourseStep";
 import type { Course } from "./types/course";
@@ -22,6 +22,8 @@ function App() {
   const [enrollmentType, setEnrollmentType] = useState<EnrollmentType | null>(
     null,
   );
+
+  const pageTopRef = useRef<HTMLDivElement | null>(null);
 
   // 수강생 정보 입력 단계
   const [applicant, setApplicant] = useState({
@@ -106,8 +108,13 @@ function App() {
     { step: 4, label: "신청 완료" },
   ];
 
+  useEffect(() => {
+    pageTopRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [currentStep]);
+
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-8">
+      <div ref={pageTopRef} />
       <div className="mx-auto max-w-5xl">
         {/* 페이지 상단 */}
         <header className="mb-8">
