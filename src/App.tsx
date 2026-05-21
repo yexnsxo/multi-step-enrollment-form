@@ -33,8 +33,8 @@ function App() {
     motivation: "",
   });
   const [groupInfo, setGroupInfo] = useState({
-    groupName: "",
-    contactPhone: "",
+    organizationName: "",
+    contactPerson: "",
     headCount: 2,
     participants: [
       { name: "", email: "" },

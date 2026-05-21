@@ -13,8 +13,8 @@ interface CompleteStepProps {
     motivation: string;
   };
   groupInfo: {
-    groupName: string;
-    contactPhone: string;
+    organizationName: string;
+    contactPerson: string;
     headCount: number;
     participants: Participant[];
   };
@@ -85,11 +85,11 @@ function CompleteStep({
             <>
               <p>
                 <span className="font-semibold">단체명:</span>{" "}
-                {groupInfo.groupName}
+                {groupInfo.organizationName}
               </p>
               <p>
                 <span className="font-semibold">담당자 연락처:</span>{" "}
-                {groupInfo.contactPhone}
+                {groupInfo.contactPerson}
               </p>
               <p>
                 <span className="font-semibold">참가자 수:</span>{" "}

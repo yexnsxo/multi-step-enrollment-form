@@ -14,7 +14,8 @@ export interface Participant {
 
 // 단체 신청 추가 정보
 export interface GroupInfo {
-  groupName: string;
+  organizationName: string;
   headCount: number;
   participants: Participant[];
+  contactPerson: string;
 }

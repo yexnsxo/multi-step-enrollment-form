@@ -24,14 +24,14 @@ interface ApplicantStepProps {
     motivation: string;
   }) => void;
   groupInfo: {
-    groupName: string;
-    contactPhone: string;
+    organizationName: string;
+    contactPerson: string;
     headCount: number;
     participants: Participant[];
   };
   onChangeGroupInfo: (groupInfo: {
-    groupName: string;
-    contactPhone: string;
+    organizationName: string;
+    contactPerson: string;
     headCount: number;
     participants: Participant[];
   }) => void;
@@ -99,8 +99,8 @@ function ApplicantStep({
 
   // 단체 정보 검증
   const isGroupEnrollment = enrollmentType === "group";
-  const isGroupNameValid = groupInfo.groupName.trim().length > 0;
-  const isContactPhoneValid = /^010-\d{4}-\d{4}$/.test(groupInfo.contactPhone);
+  const isGroupNameValid = groupInfo.organizationName.trim().length > 0;
+  const isContactPhoneValid = /^010-\d{4}-\d{4}$/.test(groupInfo.contactPerson);
 
   const hasDuplicateParticipantEmail = hasDuplicateEmails(
     groupInfo.participants,
@@ -281,18 +281,18 @@ function ApplicantStep({
             <input
               id="groupName"
               type="text"
-              value={groupInfo.groupName}
+              value={groupInfo.organizationName}
               onChange={(event) =>
                 onChangeGroupInfo({
                   ...groupInfo,
-                  groupName: event.target.value,
+                  organizationName: event.target.value,
                 })
               }
               placeholder="단체명을 입력해주세요."
               className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-600"
             />
-            {groupInfo.groupName.length > 0 &&
-              groupInfo.groupName.trim().length === 0 && (
+            {groupInfo.organizationName.length > 0 &&
+              groupInfo.organizationName.trim().length === 0 && (
                 <p className="mt-1 text-xs font-medium text-red-600">
                   단체명을 입력해주세요.
                 </p>
@@ -310,18 +310,18 @@ function ApplicantStep({
             <input
               id="contactPhone"
               type="tel"
-              value={groupInfo.contactPhone}
+              value={groupInfo.contactPerson}
               onChange={(event) =>
                 onChangeGroupInfo({
                   ...groupInfo,
-                  contactPhone: formatPhoneNumber(event.target.value),
+                  contactPerson: formatPhoneNumber(event.target.value),
                 })
               }
               maxLength={13}
               placeholder="010-1234-5678"
               className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-600"
             />
-            {groupInfo.contactPhone.length > 0 && !isContactPhoneValid && (
+            {groupInfo.contactPerson.length > 0 && !isContactPhoneValid && (
               <p className="mt-1 text-xs font-medium text-red-600">
                 담당자 연락처는 010-0000-0000 형식으로 입력해주세요.
               </p>
